@@ -5,9 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
+from .services import getTop10, getTop10TimeSeries   
+
 import logging
 logger = logging.getLogger(__name__)
-
 
 
 # ★ FilterView
@@ -18,13 +19,11 @@ class FilterView(APIView):
         year = request.query_params.get('year')
         area = request.query_params.get('area')
         variable = request.query_params.get('variable')
-
-        logger.info(f" year : {year}, area: {area}, variable: {variable}") # [LOG] 
-
+        fetchType = request.query_params.get('fetchType')
 
         # Validate parameters
-        if not year or not area or not variable:
-            raise ValidationError("Missing required parameters: 'year', 'area', and 'variable'.")
+        if not year or not area or not variable or not fetchType:
+            raise ValidationError("Missing required parameters: 'year', 'area', fetchType' and  'variable'.")
 
         # Filters
         try:
@@ -38,26 +37,19 @@ class FilterView(APIView):
         for word in filters:
             INSUMOS.remove(word)
 
+        if fetchType == 'common':
+            R = getTop10(year, area, variable, INSUMOS)
+        
+        elif fetchType == 'timeSeries':
+            data1 = getTop10(year ,area, variable, INSUMOS)
+            data2 = getTop10TimeSeries(area, variable, INSUMOS)
 
-        queryset = AgricultureData.objects.filter(
-            muni_id=area,
-            year=year,
-            variable=variable
-        ).values(*INSUMOS)  # Fetch only the required fields (INSUMOS)
+            R = {
+                "top10": data1,
+                "timeSeries": data2
+            }
 
 
-        if not queryset.exists():
-            return Response({"message": "No matching data found."}, status=404)
-
-        entry = queryset.first()  
-    
-        # Drop nan values and convert to numeric
-        filtered_data = {k: float(v) for k, v in entry.items() if v is not None}
-
-        # Get the top 9 largest values
-        largest_values = sorted(filtered_data.items(), key=lambda item: item[1], reverse=True)[:9]
-
-        response_data = dict(largest_values)
-        return Response(response_data, status=200)
+        return Response(R, status=200)
     
 # ── ⋙── ── ── ── ── ── ── ──➤ 
