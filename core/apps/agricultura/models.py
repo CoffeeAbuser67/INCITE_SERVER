@@ -1,15 +1,12 @@
 from django.db import models
 
-# Create your models here.
-from django.db import models
-
 class AgricultureData(models.Model):
     pkid = models.AutoField(primary_key=True)
-    muni_id = models.CharField(max_length=255, null =False, blank=False)
+    name_id = models.CharField(max_length=255, null =False, blank=False)
     year = models.IntegerField(null =False, blank=False)
     area = models.CharField(max_length=255, null =False, blank=False)
     variable = models.CharField(max_length=255, null =False, blank=False)
-
+    type = models.CharField(max_length=255, null =False, blank=False)
 
     total = models.FloatField(null=True, blank=True)
     abacate = models.FloatField(null=True, blank=True)
@@ -85,9 +82,10 @@ class AgricultureData(models.Model):
     uva = models.FloatField(null=True, blank=True)
 
     class Meta:
-        db_table = "agricultura_data"
+        db_table = "agriculturaData"
         indexes = [
+            models.Index(fields=["type"], name="idx_type"),
             models.Index(fields=["variable"], name="idx_variable"),
-            models.Index(fields=["muni_id"], name="idx_muni"),
+            models.Index(fields=["name_id"], name="idx_name"),
             models.Index(fields=["year"], name="idx_year"),
         ]

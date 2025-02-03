@@ -15,7 +15,7 @@ import pandas as pd
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
-os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true" #WARN Disable when not working with spyder
+# os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true" #WARN Disable when not working with spyder
 
 # Now set up Django
 django.setup()
@@ -23,11 +23,10 @@ django.setup()
 print(django.get_version(), '↯')
 # logger.info(django.get_version())
 
-df = pd.read_excel('lavouras_temp&perm_output33.xlsx')
+df = pd.read_excel('lavouras_temp&perm_OUTPUT_FINAL.xlsx')
 
 # Preencher valores NaN com None para evitar problemas ao inserir no banco
 df = df.astype(object).where(pd.notnull(df), None)
-
 
 
 from django.db import transaction
@@ -37,10 +36,11 @@ from apps.agricultura.models import AgricultureData
 # Criar lista de objetos do modelo
 objects = [
     AgricultureData(
-        muni_id=row['muni_id'],
+        name_id=row['name_id'],
         year=row['year'],
         area=row['area'],
         variable = row['variable'],
+        type = row['type'],
         total=row['total'],
         abacate=row['abacate'],
         abacaxi=row['abacaxi'],

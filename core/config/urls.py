@@ -7,7 +7,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from apps.users.views import DeleteUserView, DeleteAllUsersView, ListUsersView, GetUserRoleView
-from apps.agricultura.views import FilterView
+from apps.agricultura.views import TOPValuesView
 
 from apps.cache.views import Temp_cache_view
 
@@ -73,12 +73,10 @@ urlpatterns = [
     path("api/v1/cache_my_data/",Temp_cache_view.as_view(), name = "cash_data_view"),
 
 
-
-
     # ── ⋙ ── ── ── AgricultureData ── ── ── ── ──➤
 
-    # [ROUTE]  
-    path("api/v1/getTop10/", FilterView.as_view(), name="filter_view"),
+    # [ROUTE] TOPValuesView
+    path("api/v1/getTopValues/", TOPValuesView.as_view(), name="filter_view"),
 
 
 ]
