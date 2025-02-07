@@ -7,7 +7,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from apps.users.views import DeleteUserView, DeleteAllUsersView, ListUsersView, GetUserRoleView
-from apps.agricultura.views import TOPValuesView
+from apps.agricultura.views import TOPValuesView, TopTimeSeriesView
 
 from apps.cache.views import Temp_cache_view
 
@@ -53,33 +53,40 @@ urlpatterns = [
 
     # ── ⋙ ── ── ── Users ── ── ── ── ──➤
 
-    # [ROUTE]  listUsersView
+    # [ROUTE]  listUsers
     path("api/v1/auth/listUsers/", ListUsersView.as_view(), name="user_details"),
 
-    # [ROUTE]  DeleteUserView
+    # [ROUTE]  deleteUser/<int:pk>/
     path("api/v1/auth/deleteUser/<int:pk>/", DeleteUserView.as_view(), name = "delete_user"),
 
-    # [ROUTE]  DeleteAllUsersView
+    # [ROUTE]  deleteAll
     path("api/v1/auth/deleteAll/", DeleteAllUsersView.as_view(), name = "delete_all_view"),
 
-    # [ROUTE]  GetUserRoleView
+    # [ROUTE]  userRole
     path("api/v1/auth/userRole/", GetUserRoleView.as_view(), name = "Get-roles-view"),
 
 
 
     # ── ⋙ ── ── ── Temp_cache_view ── ── ── ── ──➤
 
-    # [ROUTE]  Temp_cache_view
+    # [ROUTE]  cache_my_data
     path("api/v1/cache_my_data/",Temp_cache_view.as_view(), name = "cash_data_view"),
 
 
     # ── ⋙ ── ── ── AgricultureData ── ── ── ── ──➤
 
-    # [ROUTE] TOPValuesView
-    path("api/v1/getTopValues/", TOPValuesView.as_view(), name="filter_view"),
+    # [ROUTE] getTopValues
+    path("api/v1/getTopValues/", TOPValuesView.as_view(), name="top_values_view"),
 
+    # [ROUTE] getTopSeries
+    path("api/v1/getTopSeries/", TopTimeSeriesView.as_view(), name="top_series_view"),
 
 ]
+
+
+TopTimeSeriesView
+
+
 
 admin.site.site_header = "crescer Admin"
 

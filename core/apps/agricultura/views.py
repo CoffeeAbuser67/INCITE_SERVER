@@ -1,13 +1,12 @@
 
 from apps.agricultura.models import AgricultureData  
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-
-from .services import getTopValues   
+from .services import getTopValues, getTopTimeSeries
 import logging
 logger = logging.getLogger(__name__)
+
 
 
 # ★ TOPValuesView
@@ -23,7 +22,7 @@ class TOPValuesView(APIView):
 
         # Validate parameters
         if not year or not area or not variable or not type:
-            raise ValidationError("Missing required parameters: 'year', 'area', type' and  'variable'.")
+            raise ValidationError("Missing required parameters: 'year' or 'area' or  type' or  'variable'.")
 
         # Filters
         try:
@@ -41,5 +40,31 @@ class TOPValuesView(APIView):
         R = getTopValues(year, area, variable, type,  INSUMOS)
 
         return Response(R, status=200)
-    
 # ── ⋙── ── ── ── ── ── ── ──➤ 
+
+
+# ★ TopTimeSeriesView
+class TopTimeSeriesView(APIView):
+    def get(self, request):
+        # Get query parameters
+
+        area = request.query_params.get('area')
+        variable = request.query_params.get('variable')
+        type = request.query_params.get('type')
+
+                # Validate parameters
+        if not area or not variable or not type:
+            raise ValidationError("Missing required parameters: 'area' or  type' or 'variable'.")
+
+        INSUMOS = [field.name for field in AgricultureData._meta.fields]
+        naoEInsumo = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+        for word in naoEInsumo:
+            INSUMOS.remove(word)
+
+        # (○) getTopTimeSeries
+        R = getTopTimeSeries(area, variable, type,  INSUMOS)
+        return Response(R, status=200)
+# ── ⋙── ── ── ── ── ── ── ──➤ 
+
+
+

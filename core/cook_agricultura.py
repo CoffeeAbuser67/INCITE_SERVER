@@ -45,6 +45,7 @@ def timer(func):
         return result
     return wrapper
 
+
 # {✪} OfficialNames
 class OfficialNames:
     def __init__(self):
@@ -120,6 +121,83 @@ class OfficialNames:
         return clean_territories
 
 
+# {●} INSUMOS_dict
+INSUMOS_dict = {
+    "abacate": "Abacate",
+    "abacaxi": "Abacaxi",
+    "acai": "Açaí",
+    "alfafa_fenada": "Alfafa Fenada",
+    "algodao_arboreo_em_caroco": "Algodão Arbóreo em Caroço",
+    "algodao_herbaceo_em_caroco": "Algodão Herbáceo em Caroço",
+    "alho": "Alho",
+    "amendoim_em_casca": "Amendoim em Casca",
+    "arroz_em_casca": "Arroz em Casca",
+    "aveia_em_grao": "Aveia em Grão",
+    "azeitona": "Azeitona",
+    "banana_cacho": "Banana (Cacho)",
+    "batata_doce": "Batata Doce",
+    "batata_inglesa": "Batata Inglesa",
+    "borracha_latex_coagulado": "Borracha (Látex Coagulado)",
+    "borracha_latex_liquido": "Borracha (Látex Líquido)",
+    "cacau_em_amendoa": "Cacau em Amêndoa",
+    "cafe_em_grao_total": "Café em Grão (Total)",
+    "caju": "Caju",
+    "cana_de_acucar": "Cana-de-Açúcar",
+    "cana_para_forragem": "Cana para Forragem",
+    "caqui": "Caqui",
+    "castanha_de_caju": "Castanha de Caju",
+    "cebola": "Cebola",
+    "centeio_em_grao": "Centeio em Grão",
+    "cevada_em_grao": "Cevada em Grão",
+    "cha_da_india_folha_verde": "Chá-da-Índia (Folha Verde)",
+    "coco_da_baia": "Coco-da-Baía",
+    "dende_cacho_de_coco": "Dendê (Cacho de Coco)",
+    "erva_mate_folha_verde": "Erva-Mate (Folha Verde)",
+    "ervilha_em_grao": "Ervilha em Grão",
+    "fava_em_grao": "Fava em Grão",
+    "feijao_em_grao": "Feijão em Grão",
+    "figo": "Figo",
+    "fumo_em_folha": "Fumo em Folha",
+    "girassol_em_grao": "Girassol em Grão",
+    "goiaba": "Goiaba",
+    "guarana_semente": "Guaraná (Semente)",
+    "juta_fibra": "Juta (Fibra)",
+    "laranja": "Laranja",
+    "limao": "Limão",
+    "linho_semente": "Linhaça (Semente de Linho)",
+    "maca": "Maçã",
+    "malva_fibra": "Malva (Fibra)",
+    "mamao": "Mamão",
+    "mamona_baga": "Mamona (Baga)",
+    "mandioca": "Mandioca",
+    "manga": "Manga",
+    "maracuja": "Maracujá",
+    "marmelo": "Marmelo",
+    "melancia": "Melancia",
+    "melao": "Melão",
+    "milho_em_grao": "Milho em Grão",
+    "noz_fruto_seco": "Noz (Fruto Seco)",
+    "palmito": "Palmito",
+    "pera": "Pera",
+    "pessego": "Pêssego",
+    "pimenta_do_reino": "Pimenta-do-Reino",
+    "rami_fibra": "Rami (Fibra)",
+    "sisal_ou_agave_fibra": "Sisal ou Agave (Fibra)",
+    "soja_em_grao": "Soja em Grão",
+    "sorgo_em_grao": "Sorgo em Grão",
+    "tangerina": "Tangerina",
+    "tomate": "Tomate",
+    "trigo_em_grao": "Trigo em Grão",
+    "triticale_em_grao": "Triticale em Grão",
+    "tungue_fruto_seco": "Tungue (Fruto Seco)",
+    "urucum_semente": "Urucum (Semente)",
+    "uva": "Uva",
+    "outros": "Outros",
+}
+
+
+
+
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -133,19 +211,18 @@ class OfficialNames:
 from apps.agricultura.models import AgricultureData
 from django.db.models import Avg
 #  <✪> getTop10
-def getTop10(year, area, variable, _type, INSUMOS):
+def getTop10(year, area, variable, type, INSUMOS):
                       
-    VARIABLES = [variable, f"{variable}_percentual"]
+    VARIABLES = {'data' : variable,  'percent_data':  f"{variable}_percentual"}
 
     D = {}
     
-    for var in VARIABLES:   
-    
+    for key in VARIABLES.keys():   
         queryset = AgricultureData.objects.filter(
             name_id=area,
             year=year,
-            variable=var,
-            type = _type
+            variable=VARIABLES[key],
+            type = type
         ).values(*INSUMOS)  
         
         if not queryset.exists():
@@ -160,37 +237,65 @@ def getTop10(year, area, variable, _type, INSUMOS):
 
         filtered_data = {k: v for k, v in filtered_data.items() if v != 0} #Remove 0's
         
-        D[var] = filtered_data
-        
+        D[key] = filtered_data
 
     # Get the percent of other elements that doesn't appear in the top values
-    target = VARIABLES[1]
-    total  = sum(D[target].values())
+
+    total  = sum(D['percent_data'].values())
     
     # Only get others if it is greather than at leas 0.01%
     if total < 99.9 :
         outros = 100 - total
-        D[target]['outros'] = outros
+        D['percent_data']['outros'] = outros
         
-    return D
+
+    VARIABLES2 = ['quantidade_produzida','rendimento_medio_da_producao'] # <●> VARIABLES2
+    cols_to_fetch = list(D['data'].keys())
+
+    for var in VARIABLES2:
+
+        queryset = AgricultureData.objects.filter(
+            name_id=area,
+            year=year,
+            variable=var,
+            type = type
+        ).values(*INSUMOS)  
+    
+        if not queryset.exists():
+            print("No matching data found.")
+            
+        entry = queryset.first()  
+            
+        target = {col: entry[col] for col in cols_to_fetch }
+        D[var] = target
+
+    #format Data 
+    FD = {}
+    for key in D.keys():
+        target = [
+            {"id" : k, "name" : INSUMOS_dict[k], 'v' : v }
+            for k, v in D[key].items()
+        ]
+        FD[key] = target
+        
+    FD['var'] = VARIABLES['data']
+        
+    return FD
 # ── ⋙── ── ── ── ── ── ── ──➤
 
 
-#  <✪> getTop10TimeSeries
-def getTop10TimeSeries (area, variable):
+#  <✪> getTopTimeSeries
+def getTopTimeSeries (area, variable, type, INSUMOS):
 
     
     queryset = AgricultureData.objects.filter(
-        name_id='ilheus', variable='valor da producao'
-    )
-    
-    
-    INSUMOS = [field.name for field in AgricultureData._meta.fields]
-    filters = ['pkid','area', 'year', 'variable', 'name_id', 'total', 'cafe_em_grao_total']
-    for word in filters:
-        INSUMOS.remove(word)
-        
-    
+        name_id=area,
+        variable=variable,
+        type = type
+    ).values(*INSUMOS)  
+
+
+
     # Calculate average for each column in INSUMOS
     averages = (
         queryset.aggregate(
@@ -217,6 +322,52 @@ def getTop10TimeSeries (area, variable):
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+
+INSUMOS = [field.name for field in AgricultureData._meta.fields]
+_filters = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+for word in _filters:
+    INSUMOS.remove(word)
+year = 2023
+area = 'irece'
+variable = "valor_da_producao"
+type = 'municipio'
+
+X = getTop10(year, area, variable, type, INSUMOS)
+
+#  ── ⋙── ── ── ── ── ── ── ──➤
+
+
+
+
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+INSUMOS = [field.name for field in AgricultureData._meta.fields]
+_filters = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+for word in _filters:
+    INSUMOS.remove(word)
+
+
+_area = 'irece'
+_variable = "valor_da_producao"
+_type = 'municipio'
+
+
+X = getTopTimeSeries (_area, _variable, _type, INSUMOS)
+
+
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 
 
 # ⋙════#════#═════════════════════════════════════➤
@@ -259,6 +410,11 @@ for muni in Munis:
     _type = "municipio"
     X = getTop10(year, area, variable, _type, INSUMOS)
     resultsM.append(X)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 
 
