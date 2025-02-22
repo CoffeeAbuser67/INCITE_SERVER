@@ -41,6 +41,7 @@ objects = [
         area=row['area'],
         variable = row['variable'],
         type = row['type'],
+        region = row['region'],
         total=row['total'],
         abacate=row['abacate'],
         abacaxi=row['abacaxi'],

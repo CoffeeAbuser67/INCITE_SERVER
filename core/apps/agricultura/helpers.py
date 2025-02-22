@@ -50,7 +50,6 @@ class OfficialNames:
         return list(self.territories_dict.keys())
     
     
-    
     def get_cleanMuniList(self):
         muni_list = []
         
@@ -98,15 +97,15 @@ INSUMOS_dict = {
     "cacau_em_amendoa": "Cacau em Amêndoa",
     "cafe_em_grao_total": "Café em Grão (Total)",
     "caju": "Caju",
-    "cana_de_acucar": "Cana-de-Açúcar",
+    "cana_de_acucar": "Cana de Açúcar",
     "cana_para_forragem": "Cana para Forragem",
     "caqui": "Caqui",
     "castanha_de_caju": "Castanha de Caju",
     "cebola": "Cebola",
     "centeio_em_grao": "Centeio em Grão",
     "cevada_em_grao": "Cevada em Grão",
-    "cha_da_india_folha_verde": "Chá-da-Índia (Folha Verde)",
-    "coco_da_baia": "Coco-da-Baía",
+    "cha_da_india_folha_verde": "Chá da Índia (Folha Verde)",
+    "coco_da_baia": "Coco da Bahia",
     "dende_cacho_de_coco": "Dendê (Cacho de Coco)",
     "erva_mate_folha_verde": "Erva-Mate (Folha Verde)",
     "ervilha_em_grao": "Ervilha em Grão",
@@ -136,7 +135,7 @@ INSUMOS_dict = {
     "palmito": "Palmito",
     "pera": "Pera",
     "pessego": "Pêssego",
-    "pimenta_do_reino": "Pimenta-do-Reino",
+    "pimenta_do_reino": "Pimenta do Reino",
     "rami_fibra": "Rami (Fibra)",
     "sisal_ou_agave_fibra": "Sisal ou Agave (Fibra)",
     "soja_em_grao": "Soja em Grão",

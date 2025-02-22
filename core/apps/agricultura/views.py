@@ -1,12 +1,10 @@
-
 from apps.agricultura.models import AgricultureData  
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from .services import getTopValues, getTopTimeSeries
+from .services import getTopValues, getTopTimeSeries, getTotalValues
 import logging
 logger = logging.getLogger(__name__)
-
 
 
 # ★ TOPValuesView
@@ -32,7 +30,7 @@ class TOPValuesView(APIView):
 
 
         INSUMOS = [field.name for field in AgricultureData._meta.fields]
-        naoEInsumo = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+        naoEInsumo = ['pkid','area', 'region', 'year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
         for word in naoEInsumo:
             INSUMOS.remove(word)
 
@@ -57,7 +55,7 @@ class TopTimeSeriesView(APIView):
             raise ValidationError("Missing required parameters: 'area' or  type' or 'variable'.")
 
         INSUMOS = [field.name for field in AgricultureData._meta.fields]
-        naoEInsumo = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+        naoEInsumo = ['pkid','area', 'region', 'year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
         for word in naoEInsumo:
             INSUMOS.remove(word)
 
@@ -67,4 +65,28 @@ class TopTimeSeriesView(APIView):
 # ── ⋙── ── ── ── ── ── ── ──➤ 
 
 
+# ★ RegionValuesView
+class RegionValuesView(APIView):
+    def get(self, request):
+        # Get query parameters
+
+        region = request.query_params.get('region')
+        year = request.query_params.get('year')
+        variable = request.query_params.get('variable')
+
+
+        if not region or not year or not variable:
+            raise ValidationError("Missing required parameters: 'region' or  year' or 'variable'.")
+
+        # Filters
+        try:
+            year = int(year)  # Ensure year is an integer
+        except ValueError:
+            raise ValidationError("'year' must be a valid integer.")
+
+        # (○) getTotalValues
+        R = getTotalValues(region, year, variable)
+
+        return Response(R, status=200)
+# ── ⋙── ── ── ── ── ── ── ──➤ 
 

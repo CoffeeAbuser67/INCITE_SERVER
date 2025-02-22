@@ -24,7 +24,7 @@ print(django.get_version())
 
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#  ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ║                                                                                 ║
+# ×●●●× ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 # ┌────────────┐
 # │DECLARATIONS│
@@ -104,6 +104,11 @@ class OfficialNames:
         
         muni_list = [self.clean_str(el) for el in muni_list]
         return muni_list
+    
+    
+    
+    
+    
     
     
     
@@ -197,22 +202,20 @@ INSUMOS_dict = {
 
 
 
-
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-#  ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ║                                                                                                  ║
+# ×●●●× ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ●●●● ○○○○ ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 # ── ⋙── ── ── ── ── ── ── ── ── ── ── ──➤
 #       ┌──────┐┌────────┐
 #       │DJANGO││SERVICES│
 #       └──────┘└────────┘
 
-
-
 from apps.agricultura.models import AgricultureData
 from django.db.models import Avg
+
 #  <✪> getTop10
 def getTop10(year, area, variable, type, INSUMOS):
-                      
+
     VARIABLES = {'data' : variable,  'percent_data':  f"{variable}_percentual"}
 
     D = {}
@@ -250,6 +253,7 @@ def getTop10(year, area, variable, type, INSUMOS):
         
 
     VARIABLES2 = ['quantidade_produzida','rendimento_medio_da_producao'] # <●> VARIABLES2
+    D2 = {}
     cols_to_fetch = list(D['data'].keys())
 
     for var in VARIABLES2:
@@ -267,7 +271,18 @@ def getTop10(year, area, variable, type, INSUMOS):
         entry = queryset.first()  
             
         target = {col: entry[col] for col in cols_to_fetch }
-        D[var] = target
+        D2[var] = target
+
+
+    FD2 =  [ 
+        {
+            'id' : col,
+            'name' : INSUMOS_dict[col],
+            'qp' : D2[VARIABLES2[0]][col],
+            'rm' : D2[VARIABLES2[1]][col],
+        }
+        for col in cols_to_fetch
+    ]
 
     #format Data 
     FD = {}
@@ -277,9 +292,9 @@ def getTop10(year, area, variable, type, INSUMOS):
             for k, v in D[key].items()
         ]
         FD[key] = target
-        
     FD['var'] = VARIABLES['data']
-        
+    FD['QP_RM'] = FD2
+    
     return FD
 # ── ⋙── ── ── ── ── ── ── ──➤
 
@@ -287,13 +302,13 @@ def getTop10(year, area, variable, type, INSUMOS):
 #  <✪> getTopTimeSeries
 def getTopTimeSeries (area, variable, type, INSUMOS):
 
+    FD = {}
     
     queryset = AgricultureData.objects.filter(
         name_id=area,
         variable=variable,
         type = type
     ).values(*INSUMOS)  
-
 
 
     # Calculate average for each column in INSUMOS
@@ -303,19 +318,26 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
         )
     )
     
-    
     # Drop null averages
     filtered_averages = {k: v for k, v in averages.items() if v is not None}
     
     # Get top 10 columns by average value
     top10_fields = sorted(filtered_averages.items(), key=lambda x: x[1], reverse=True)[:10]
-    top10_field_names = [field for field, _ in top10_fields]
-    top10_field_names.append('year')  # Include 'year' in the final result
+    top10_field_keys = [field for field, _ in top10_fields]
+    
+    FD['keys'] = top10_field_keys
+    
+    top10_field_keys.append('year')  # Include 'year' in the final result
     
     # Query the data for the top 10 fields
-    F = queryset.values(*top10_field_names)
+    F = queryset.values(*top10_field_keys)
     
-    return list(F)
+    if not F.exists():
+        print("No matching data found.")
+    
+    FD['data'] = sorted(F, key=lambda x: x['year'])
+    
+    return FD
 # ── ⋙── ── ── ── ── ── ── ──➤
 
 
@@ -323,98 +345,119 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
+if '🦀' == '🦀':
 
-
-INSUMOS = [field.name for field in AgricultureData._meta.fields]
-_filters = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
-for word in _filters:
-    INSUMOS.remove(word)
-year = 2023
-area = 'irece'
-variable = "valor_da_producao"
-type = 'municipio'
-
-X = getTop10(year, area, variable, type, INSUMOS)
-
+    INSUMOS = [field.name for field in AgricultureData._meta.fields]
+    _filters = ['pkid','area','year', 'region', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+    for word in _filters:
+        INSUMOS.remove(word)
+    year = 2023
+    area = 'bahia'
+    variable = "valor_da_producao"
+    type = 'regiao'
+    
+    X = getTop10(year, area, variable, type, INSUMOS)
 #  ── ⋙── ── ── ── ── ── ── ──➤
 
-
-
-
-
-
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
+if '🦀' == '🦀':
+    INSUMOS = [field.name for field in AgricultureData._meta.fields]
+    _filters = ['pkid','area','year', 'region', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+    for word in _filters:
+        INSUMOS.remove(word)
+    
+    _area = 'irece'
+    _variable = "valor_da_producao"
+    _type = 'municipio'
 
-INSUMOS = [field.name for field in AgricultureData._meta.fields]
-_filters = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
-for word in _filters:
-    INSUMOS.remove(word)
-
-
-_area = 'irece'
-_variable = "valor_da_producao"
-_type = 'municipio'
-
-
-X = getTopTimeSeries (_area, _variable, _type, INSUMOS)
-
-
-
+    X = getTopTimeSeries (_area, _variable, _type, INSUMOS)
+#  ── ⋙── ── ── ── ── ── ── ──➤
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-
-
 
 # ⋙════#════#═════════════════════════════════════➤
 #   ╔══#════#══╗
 #   ║ ANALYSIS ║
 #   ╚══════════╝
 
-
 #     ┌─────┐
 #     │TOP10│
 #     └─────┘
 
-M = OfficialNames()
-Munis = M.get_cleanMuniList()
-
-Regions = M.get_cleanRegionList()
-Regions = Regions + ['brasil', 'bahia']
-
-INSUMOS = [field.name for field in AgricultureData._meta.fields]
-_filters = ['pkid','area','year', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
-for word in _filters:
-    INSUMOS.remove(word)
-
-
-resultsR = []
-for region in Regions:
-    area = region
-    year = 2000
-    variable = 'area_colhida'
-    _type = "regiao"
-    X = getTop10(year, area, variable, _type, INSUMOS)
-    resultsR.append(X)
-
-
-resultsM = []
-for muni in Munis:
-    area = muni
-    year = 2000
-    variable = 'area_colhida'
-    _type = "municipio"
-    X = getTop10(year, area, variable, _type, INSUMOS)
-    resultsM.append(X)
+if '🦀' == '🦀':
+    M = OfficialNames()
+    Munis = M.get_cleanMuniList()
+    
+    Regions = M.get_cleanRegionList()
+    Regions = Regions + ['brasil', 'bahia']
+    
+    INSUMOS = [field.name for field in AgricultureData._meta.fields]
+    _filters = ['pkid','area','year', 'region', 'total','variable', 'cafe_em_grao_arabica', 'cafe_em_grao_canephora', 'name_id', 'type']
+    for word in _filters:
+        INSUMOS.remove(word)
+    
+    
+    resultsR = []
+    for region in Regions:
+        area = region
+        year = 2000
+        variable = 'area_colhida'
+        _type = "regiao"
+        X = getTop10(year, area, variable, _type, INSUMOS)
+        resultsR.append(X)
+    
+    
+    resultsM = []
+    for muni in Munis:
+        area = muni
+        year = 2000
+        variable = 'area_colhida'
+        _type = "municipio"
+        X = getTop10(year, area, variable, _type, INSUMOS)
+        resultsM.append(X)
+#  ── ⋙── ── ── ── ── ── ── ──➤
 
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+# def get_total_values(area, year, variable):
+
+
+region = 'bahia'
+year = 2023
+variable = 'valor_da_producao'
+
+queryset = AgricultureData.objects.filter(
+    region = region,
+    year = year,
+    variable= variable,
+).values('total', 'name_id')  
+
+
+X = list(queryset)
+
+
+
+
+# def get_thermometer_color(value: float, start: float, end: float, colors: list[str]) -> str:
+#     step_size = (end - start) / len(colors)
+#     index = min(max(int((value - start) / step_size), 0), len(colors) - 1)
+#     return colors[index]
+
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+#  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
+# ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
 
 
 

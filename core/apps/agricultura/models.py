@@ -7,6 +7,7 @@ class AgricultureData(models.Model):
     area = models.CharField(max_length=255, null =False, blank=False)
     variable = models.CharField(max_length=255, null =False, blank=False)
     type = models.CharField(max_length=255, null =False, blank=False)
+    region = models.CharField(max_length=255, null = True, blank = True)
 
     total = models.FloatField(null=True, blank=True)
     abacate = models.FloatField(null=True, blank=True)
@@ -88,4 +89,5 @@ class AgricultureData(models.Model):
             models.Index(fields=["variable"], name="idx_variable"),
             models.Index(fields=["name_id"], name="idx_name"),
             models.Index(fields=["year"], name="idx_year"),
+            models.Index(fields=["region"], name="idx_region"),
         ]

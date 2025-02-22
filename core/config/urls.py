@@ -7,7 +7,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from apps.users.views import DeleteUserView, DeleteAllUsersView, ListUsersView, GetUserRoleView
-from apps.agricultura.views import TOPValuesView, TopTimeSeriesView
+from apps.agricultura.views import TOPValuesView, TopTimeSeriesView, RegionValuesView
 
 from apps.cache.views import Temp_cache_view
 
@@ -81,10 +81,12 @@ urlpatterns = [
     # [ROUTE] getTopSeries
     path("api/v1/getTopSeries/", TopTimeSeriesView.as_view(), name="top_series_view"),
 
+    # [ROUTE] getRegionValues
+    path("api/v1/getRegionValues/", RegionValuesView.as_view(), name="top_series_view"),
 ]
 
 
-TopTimeSeriesView
+
 
 
 

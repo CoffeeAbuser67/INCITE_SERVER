@@ -48,6 +48,7 @@ def getTopValues(year: int, area: str, variable: str, type:str, INSUMOS: List[st
         
 
     VARIABLES2 = ['quantidade_produzida','rendimento_medio_da_producao'] # <●> VARIABLES2
+    D2 = {}
     cols_to_fetch = list(D['data'].keys())
 
     for var in VARIABLES2:
@@ -65,7 +66,18 @@ def getTopValues(year: int, area: str, variable: str, type:str, INSUMOS: List[st
         entry = queryset.first()  
             
         target = {col: entry[col] for col in cols_to_fetch }
-        D[var] = target
+        D2[var] = target
+
+
+    FD2 =  [ 
+        {
+            'id' : col,
+            'name' : INSUMOS_dict[col],
+            'qp' : D2[VARIABLES2[0]][col],
+            'rm' : D2[VARIABLES2[1]][col],
+        }
+        for col in cols_to_fetch
+    ]
 
     #format Data 
     FD = {}
@@ -77,7 +89,7 @@ def getTopValues(year: int, area: str, variable: str, type:str, INSUMOS: List[st
         FD[key] = target
         
     FD['var'] = VARIABLES['data']
-
+    FD['QP_RM'] = FD2
 
     return FD
 # ── ⋙── ── ── ── ── ── ── ──➤
@@ -86,19 +98,13 @@ def getTopValues(year: int, area: str, variable: str, type:str, INSUMOS: List[st
 #  <✪> getTopTimeSeries
 def getTopTimeSeries (area, variable, type, INSUMOS):
     
+    FD = {}
+
     queryset = AgricultureData.objects.filter(
         name_id=area,
         variable=variable,
         type = type
     ).values(*INSUMOS)  
-
-
-    # Calculate average for each column in INSUMOS
-    averages = (
-        queryset.aggregate(
-            **{field: Avg(field) for field in INSUMOS}
-        )
-    )
 
     # Calculate average for each column in INSUMOS
     averages = (
@@ -111,12 +117,31 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
     filtered_averages = {k: v for k, v in averages.items() if v is not None}
     
     # Get top 10 columns by average value
-    top10_fields = sorted(filtered_averages.items(), key=lambda x: x[1], reverse=True)[:10]
-    top10_field_names = [field for field, _ in top10_fields]
-    top10_field_names.append('year')  # Include 'year' in the final result
+    top10_fields = sorted(filtered_averages.items(), key=lambda x: x[1], reverse=True)[:6]
+    top10_field_keys = [field for field, _ in top10_fields]
+
+    FD['keys'] = top10_field_keys.copy()
+
+    top10_field_keys.append('year')  # Include 'year' in the final result
+    F = queryset.values(*top10_field_keys) 
     
-    # Query the data for the top 10 fields
-    F = queryset.values(*top10_field_names)
-    
-    return F
+    if not F.exists():
+        print("No matching data found.")
+
+    FD['data'] = sorted(F, key=lambda x: x['year'])
+
+    return FD
+# ── ⋙── ── ── ── ── ── ── ──➤
+
+
+#  <✪> getTotalValues
+def getTotalValues (region, year, variable):
+
+    queryset = AgricultureData.objects.filter(
+        region = region,
+        year = year,
+        variable= variable,
+    ).values('total', 'name_id')  
+
+    return queryset
 # ── ⋙── ── ── ── ── ── ── ──➤
