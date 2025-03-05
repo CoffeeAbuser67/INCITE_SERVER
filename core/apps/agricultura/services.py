@@ -118,7 +118,7 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
     
     # Get top 10 columns by average value
     top10_fields = sorted(filtered_averages.items(), key=lambda x: x[1], reverse=True)[:6]
-    top10_field_keys = [field for field, _ in top10_fields]
+    top10_field_keys = sorted([key for key, _ in top10_fields])  
 
     FD['keys'] = top10_field_keys.copy()
 

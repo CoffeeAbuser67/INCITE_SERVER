@@ -151,8 +151,7 @@ MEDIA_ROOT = str(ROOT_DIR / "mediafiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.User" # ✳ AUTH_USER_MODEL
 
 # WARN: AllowAny permission 
 REST_FRAMEWORK = {
