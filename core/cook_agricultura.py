@@ -318,6 +318,7 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
         )
     )
     
+    
     # Drop null averages
     filtered_averages = {k: v for k, v in averages.items() if v is not None}
     
@@ -337,6 +338,17 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
     
     FD['data'] = sorted(F, key=lambda x: x['year'])
     
+    
+
+    # NECESSARIO PQ O RECHART QUEBRA COM VALORES ONDE Y = 0 
+    # TO CONVERTENDO VALORES DE 0 PARA 0.0001 
+    # QUE MERDA VUH! BIBLIOTECA PODRE
+    for item in FD['data'] :
+        for key, value in item.items():
+            if value == 0.0:
+                item[key] = 0.0001
+
+
     return FD
 # ── ⋙── ── ── ── ── ── ── ──➤
 
@@ -423,13 +435,13 @@ if '🦀' == '🦀':
 #  ── ⋙── ── ── ── ── ── ── ──➤
 
 
+
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 
 # def get_total_values(area, year, variable):
-
 
 region = 'bahia'
 year = 2023
@@ -443,7 +455,6 @@ queryset = AgricultureData.objects.filter(
 
 
 X = list(queryset)
-
 
 
 

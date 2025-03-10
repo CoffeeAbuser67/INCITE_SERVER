@@ -120,7 +120,10 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
     top10_fields = sorted(filtered_averages.items(), key=lambda x: x[1], reverse=True)[:6]
     top10_field_keys = sorted([key for key, _ in top10_fields])  
 
-    FD['keys'] = top10_field_keys.copy()
+    FD['keys'] = {key : INSUMOS_dict[key]  for key in top10_field_keys}
+
+    # FD['keys'] = top10_field_keys.copy()
+    # FD['names'] = [INSUMOS_dict[key] for key in top10_field_keys]
 
     top10_field_keys.append('year')  # Include 'year' in the final result
     F = queryset.values(*top10_field_keys) 
@@ -129,6 +132,14 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
         print("No matching data found.")
 
     FD['data'] = sorted(F, key=lambda x: x['year'])
+
+    # NECESSARIO PQ O RECHART QUEBRA COM VALORES ONDE Y = 0 
+    # TO CONVERTENDO VALORES DE 0 PARA None
+    # AFF! BIBLIOTECA PODRE!
+    for item in FD['data'] :
+        for key, value in item.items():
+            if value == 0.0:
+                item[key] = None
 
     return FD
 # ── ⋙── ── ── ── ── ── ── ──➤
