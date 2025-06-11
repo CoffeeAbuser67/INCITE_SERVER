@@ -12,6 +12,29 @@ from apps.agricultura.views import TOPValuesView, TopTimeSeriesView, RegionValue
 from apps.cache.views import Temp_cache_view
 
 
+from rest_framework.routers import DefaultRouter
+
+from apps.incite.views import (
+    InstituicaoViewSet, 
+    PesquisadorViewSet, 
+    PesquisaViewSet,
+    PostagemViewSet,
+    AcaoExtensionistaViewSet,
+    ProdutoInovacaoViewSet
+)
+
+# 
+router = DefaultRouter()
+router.register(r'instituicoes', InstituicaoViewSet)
+router.register(r'pesquisadores', PesquisadorViewSet)
+router.register(r'pesquisas', PesquisaViewSet) # Você já tinha o ViewSet, só faltava registrar
+router.register(r'postagens', PostagemViewSet)
+router.register(r'acoes_extensionistas', AcaoExtensionistaViewSet)
+router.register(r'produtos', ProdutoInovacaoViewSet)
+
+
+
+
 schema_view = get_schema_view(
     openapi.Info(
         title="BI API Admin",
@@ -37,9 +60,9 @@ urlpatterns = [
     path("api/v1/redoc/", schema_view.with_ui("redoc", cache_timeout=0)),
 
     
-    # ┌──────────────┐
-    # │ df-rest-auth │
-    # └──────────────┘
+    # ★  ── ⋙⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⫸
+    #          ★ df-rest-auth ★
+    # ★  ── ⋙⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⫸
 
     path("api/v1/auth/", include("dj_rest_auth.urls")),
     path("api/v1/auth/registration/", include("dj_rest_auth.registration.urls")),
@@ -50,38 +73,57 @@ urlpatterns = [
     ),
 
 
+    # ── ⋙ ── ── ── instituicoes pesquisadores postagens  ── ── ── ── ──➤
+
+    # [ROUTE]  api/v1/instituicoes/
+    # [ROUTE]  api/v1/instituicoes/{id}/ 
+
+    # [ROUTE]  api/v1/pesquisadores/
+    # [ROUTE]  api/v1/pesquisadores/{id}/ 
+
+    # [ROUTE]  api/v1/postagens/
+    # [ROUTE]  api/v1/postagens/{id}/ 
+    path('api/v1/', include(router.urls)),
+    # NOTE
+    #         Método    | URL                         | Ação            | Descrição
+    # --------- | --------------------------- | --------------- | ---------------------------------------
+    # GET       | /api/instituicoes/          | list            | Lista todas as instituições.
+    # POST      | /api/instituicoes/          | create          | Cria uma nova instituição.
+    # GET       | /api/instituicoes/{id}/     | retrieve        | Retorna os detalhes de uma instituição.
+    # PUT       | /api/instituicoes/{id}/     | update          | Atualiza todos os campos de uma instituição.
+    # PATCH     | /api/instituicoes/{id}/     | partial_update  | Atualiza alguns campos de uma instituição.
+    # DELETE    | /api/instituicoes/{id}/     | destroy         | Deleta uma instituição.
+
 
     # ── ⋙ ── ── ── Users ── ── ── ── ──➤
 
-    # [ROUTE]  listUsers
+    # [ROUTE]  api/v1/auth/listUsers/
     path("api/v1/auth/listUsers/", ListUsersView.as_view(), name="user_details"),
 
-    # [ROUTE]  deleteUser/<int:pk>/
+    # [ROUTE]  api/v1/auth/deleteUser/<int:pk>/
     path("api/v1/auth/deleteUser/<int:pk>/", DeleteUserView.as_view(), name = "delete_user"),
 
-    # [ROUTE]  deleteAll
+    # [ROUTE]  api/v1/auth/deleteAll/
     path("api/v1/auth/deleteAll/", DeleteAllUsersView.as_view(), name = "delete_all_view"),
 
-    # [ROUTE]  userRole
+    # [ROUTE]  api/v1/auth/userRole/
     path("api/v1/auth/userRole/", GetUserRoleView.as_view(), name = "Get-roles-view"),
-
 
 
     # ── ⋙ ── ── ── Temp_cache_view ── ── ── ── ──➤
 
-    # [ROUTE]  cache_my_data
+    # [ROUTE]  api/v1/cache_my_data/
     path("api/v1/cache_my_data/",Temp_cache_view.as_view(), name = "cash_data_view"),
-
 
     # ── ⋙ ── ── ── AgricultureData ── ── ── ── ──➤
 
-    # [ROUTE] getTopValues
+    # [ROUTE] api/v1/getTopValues/
     path("api/v1/getTopValues/", TOPValuesView.as_view(), name="top_values_view"),
 
-    # [ROUTE] getTopSeries
+    # [ROUTE] api/v1/getTopSeries/
     path("api/v1/getTopSeries/", TopTimeSeriesView.as_view(), name="top_series_view"),
 
-    # [ROUTE] getRegionValues
+    # [ROUTE] api/v1/getRegionValues/
     path("api/v1/getRegionValues/", RegionValuesView.as_view(), name="top_series_view"),
 ]
 
