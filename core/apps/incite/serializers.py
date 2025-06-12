@@ -42,6 +42,6 @@ class InstituicaoSerializer(serializers.ModelSerializer):
         model = Instituicao
         fields = [
             'id', 'nome', 'cidade_id_mapa', 'coordenador_responsavel', 'email', 'telefone', 
-            'informacoes_adicionais', 'postagens', 'pesquisadores', 'pesquisas', 
+            'informacoes_adicionais',  'offset_x', 'offset_y', 'postagens', 'pesquisadores', 'pesquisas', 
             'acoes_extensionistas', 'produtos'
         ]

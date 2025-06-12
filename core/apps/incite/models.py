@@ -6,11 +6,13 @@ from django.db import models
 class Instituicao(models.Model):
     # Campos obrigatórios
     nome = models.CharField(max_length=255)
-
     cidade_id_mapa = models.CharField(max_length=100, db_index=True, null=True, blank=True)
     coordenador_responsavel = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20) # CharField para acomodar '()' e '-'
+
+    offset_x = models.FloatField(default=0)
+    offset_y = models.FloatField(default=0)
 
     # Campos opcionais
     quantidade_pesquisadores = models.PositiveIntegerField(default=0)
