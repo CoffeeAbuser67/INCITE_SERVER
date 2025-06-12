@@ -41,7 +41,7 @@ class InstituicaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instituicao
         fields = [
-            'id', 'nome', 'cidade', 'coordenador_responsavel', 'email', 'telefone', 
+            'id', 'nome', 'cidade_id_mapa', 'coordenador_responsavel', 'email', 'telefone', 
             'informacoes_adicionais', 'postagens', 'pesquisadores', 'pesquisas', 
             'acoes_extensionistas', 'produtos'
         ]
