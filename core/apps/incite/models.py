@@ -11,6 +11,8 @@ class Instituicao(models.Model):
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20) # CharField para acomodar '()' e '-'
 
+
+    marcador_logo = models.ImageField(upload_to='logos_instituicoes/', blank=True, null=True)
     offset_x = models.FloatField(default=0)
     offset_y = models.FloatField(default=0)
 

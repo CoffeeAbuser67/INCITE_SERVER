@@ -1,5 +1,6 @@
 from dj_rest_auth.views import PasswordResetConfirmView
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from drf_yasg import openapi
@@ -10,7 +11,6 @@ from apps.users.views import DeleteUserView, DeleteAllUsersView, ListUsersView, 
 from apps.agricultura.views import TOPValuesView, TopTimeSeriesView, RegionValuesView
 
 from apps.cache.views import Temp_cache_view
-
 
 from rest_framework.routers import DefaultRouter
 
@@ -23,7 +23,6 @@ from apps.incite.views import (
     ProdutoInovacaoViewSet
 )
 
-# 
 router = DefaultRouter()
 router.register(r'instituicoes', InstituicaoViewSet)
 router.register(r'pesquisadores', PesquisadorViewSet)
@@ -31,9 +30,6 @@ router.register(r'pesquisas', PesquisaViewSet) # Você já tinha o ViewSet, só 
 router.register(r'postagens', PostagemViewSet)
 router.register(r'acoes_extensionistas', AcaoExtensionistaViewSet)
 router.register(r'produtos', ProdutoInovacaoViewSet)
-
-
-
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -127,13 +123,9 @@ urlpatterns = [
     path("api/v1/getRegionValues/", RegionValuesView.as_view(), name="top_series_view"),
 ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-
-
-
-
-admin.site.site_header = "crescer Admin"
-
-admin.site.site_title = "crescer Portal"
-
-admin.site.index_title = "crescer Admin Portal"
+admin.site.site_header = "Incite Admin"
+admin.site.site_title = "Incite Portal"
+admin.site.index_title = "Incite Admin Portal"
