@@ -11,6 +11,7 @@ SECRET_KEY = env(
 )
 
 # WARN SECURITY: don't run with debug turned on in production!
+#  [ENV]
 DEBUG = True
 
 

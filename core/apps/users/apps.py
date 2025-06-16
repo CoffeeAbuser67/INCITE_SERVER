@@ -7,5 +7,10 @@ class UsersConfig(AppConfig):
     name = "apps.users"
     verbose_name = _("Users")
 
-    def ready(self):
-        from apps.users import signals
+
+
+
+
+
+
+

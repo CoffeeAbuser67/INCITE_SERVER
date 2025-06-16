@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -9,8 +10,11 @@ class Instituicao(models.Model):
     cidade_id_mapa = models.CharField(max_length=100, db_index=True, null=True, blank=True)
     coordenador_responsavel = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20) # CharField para acomodar '()' e '-'
+    telefone = models.CharField(max_length=20) 
 
+    # ForeignKey para o modelo de usuário que definimos em settings.py
+    # WARN Nao pode ter blank nem null= True
+    criador = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="instituicoes", blank=True, null= True )
 
     marcador_logo = models.ImageField(upload_to='logos_instituicoes/', blank=True, null=True)
     offset_x = models.FloatField(default=0)
@@ -23,6 +27,7 @@ class Instituicao(models.Model):
     def __str__(self):
         return self.nome
     
+#  . . .
 
 # ✪ Pesquisador
 class Pesquisador(models.Model):

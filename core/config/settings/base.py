@@ -15,9 +15,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 ROOT_DIR = BASE_DIR / "core"
 
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DJANGO_DEBUG", False)
-
 DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -98,8 +95,6 @@ DATABASES = {
 # DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 
-
-
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
@@ -128,15 +123,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
-
 SITE_ID = 1
-
 ADMIN_URL = "lesecret/"
 
 
@@ -162,43 +152,38 @@ REST_FRAMEWORK = {
         # "rest_framework.permissions.IsAuthenticated", 
         "rest_framework.permissions.AllowAny",
     ],
-    "DEFAULT_FILTER_BACKENDS": [
-        "django_filters.rest_framework.DjangoFilterBackend",
-    ],
 }
 
+
+# ── ◯⫘⫘⫘⫘  dj-rest-auth  ⫘⫘⫘⫘⫘⫸
 
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=60),   # _PIN_ Access Token Time ⏰ 
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=20),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=6),# _PIN_ ⏰ ACCESS_TOKEN_LIFETIME
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1), 
     "ROTATE_REFRESH_TOKENS": False,
-    # "SIGNING_KEY": env("SIGNING_KEY"),
-    "SIGNING_KEY": "Q_OlLlrzNWu4dvgRbyrv7g0PQ30txCl9dD7xounpZLB0rvdn0xc",  # _PIN_ switch in docker  # WARN 
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
+    # "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "SIGNING_KEY": "Q_OlLlrzNWu4dvgRbyrv7g0PQ30txCl9dD7xounpZLB0rvdn0xc",  # [ENV]
+    "COOKIE_NAME": "access-token",
+    "COOKIE_SECURE": True,  # WARN pra funcionar em dev
+    "COOKIE_HTTPONLY": True,
+    "COOKIE_SAMESITE": "None",   # WARN pra funcionar em dev
 }
+
 
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "access-token",
     "JWT_AUTH_REFRESH_COOKIE": "refresh-token",
-    'JWT_AUTH_SECURE': False, # _PIN_ Set to true in https
+    'JWT_AUTH_SECURE': True, # _PIN_ Set to true in https
     'JWT_AUTH_HTTPONLY': True,
-    'JWT_AUTH_SAMESITE': 'Strict', # Lax, Strict
-    # _PIN_ Overriding these Serializers  
-    "REGISTER_SERIALIZER": "apps.users.serializers.CustomRegisterSerializer",
-    "USER_DETAILS_SERIALIZER": "apps.users.serializers.CustomUserDetailsSerializer",
-
+    'JWT_AUTH_SAMESITE': 'None', # Lax, Strict
+    "REGISTER_SERIALIZER": "apps.users.serializers.CustomRegisterSerializer", # _PIN_ Overriding these Serializers
+    "USER_DETAILS_SERIALIZER": "apps.users.serializers.UserSerializer",
 }
 
-AUTHENTICATION_BACKENDS = [
-    "allauth.account.auth_backends.AuthenticationBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
-
-
+# Configuração do Allauth (dj-rest-auth depende dele)
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
@@ -208,6 +193,13 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 
 
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+
+# ──  ⋙── ── ── LOGGING ── ── ── ──➤
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

@@ -5,13 +5,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-
-
-
-
-
-
-
 # ★ Temp_cache_view 
 class Temp_cache_view(APIView):
 
