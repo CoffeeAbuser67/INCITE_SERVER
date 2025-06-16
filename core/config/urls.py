@@ -15,6 +15,7 @@ from allauth.account.views import ConfirmEmailView
 
 
 from apps.incite.views import (
+    InstituicaoMarkerView,
     InstituicaoViewSet, 
     PesquisadorViewSet, 
     PesquisaViewSet,
@@ -99,6 +100,7 @@ urlpatterns = [
     # [ROUTE]  api/v1/postagens/
     # [ROUTE]  api/v1/postagens/{id}/ 
     path('api/v1/', include(router.urls)),
+
     # NOTE
     #         Método    | URL                         | Ação            | Descrição
     # --------- | --------------------------- | --------------- | ---------------------------------------
@@ -108,6 +110,14 @@ urlpatterns = [
     # PUT       | /api/instituicoes/{id}/     | update          | Atualiza todos os campos de uma instituição.
     # PATCH     | /api/instituicoes/{id}/     | partial_update  | Atualiza alguns campos de uma instituição.
     # DELETE    | /api/instituicoes/{id}/     | destroy         | Deleta uma instituição.
+
+    #  . . .
+    # [ROUTE]  api/v1/map-markers/
+    path(
+        'api/v1/map-markers/', 
+        InstituicaoMarkerView.as_view(), 
+        name='public-map-markers'
+    ),
 
 
     # ── ⋙ ── ── ── Temp_cache_view ── ── ── ── ──➤

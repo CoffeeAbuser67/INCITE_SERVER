@@ -1,10 +1,10 @@
 # incite/views.py
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions, generics
 from rest_framework.response import Response
 
 from .models import Instituicao, Pesquisador, Pesquisa, Postagem, AcaoExtensionista, ProdutoInovacao
-from .serializers import InstituicaoSerializer, PesquisadorSerializer, PesquisaSerializer, PostagemSerializer, AcaoExtensionistaSerializer, ProdutoInovacaoSerializer
+from .serializers import InstituicaoSerializer, PesquisadorSerializer, PesquisaSerializer, PostagemSerializer, AcaoExtensionistaSerializer, ProdutoInovacaoSerializer , InstituicaoMarkerSerializer
 
 
 
@@ -12,6 +12,8 @@ from .serializers import InstituicaoSerializer, PesquisadorSerializer, PesquisaS
 class InstituicaoViewSet(viewsets.ModelViewSet):
     queryset = Instituicao.objects.all().order_by('nome')
     serializer_class = InstituicaoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
 
     # 1. LÓGICA DE PERMISSÃO (QUEM VÊ O QUÊ)
     # ● get_queryset
@@ -66,6 +68,10 @@ class InstituicaoViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
 # ── ⋙── ── ── ── ── ── ── ──➤
 
+class InstituicaoMarkerView(generics.ListAPIView): # ✪ InstituicaoMarkerView
+    queryset = Instituicao.objects.all()
+    serializer_class = InstituicaoMarkerSerializer
+    permission_classes = [permissions.AllowAny]
 
 class PesquisadorViewSet(viewsets.ModelViewSet): # ✪ PesquisadorViewSet
     queryset = Pesquisador.objects.all()

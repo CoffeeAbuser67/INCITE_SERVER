@@ -3,6 +3,22 @@
 from rest_framework import serializers
 from .models import Instituicao, Postagem, Pesquisador, Pesquisa, AcaoExtensionista, ProdutoInovacao
 
+
+
+# Serializa apenas os campos de Instituicao necessários para o mapa público.
+class InstituicaoMarkerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instituicao
+        fields = [
+            'id', 
+            'nome', 
+            'cidade_id_mapa', 
+            'marcador_logo', 
+            'offset_x', 
+            'offset_y'
+        ]
+
+
 class PostagemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Postagem
