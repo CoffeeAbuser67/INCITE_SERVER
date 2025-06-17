@@ -13,6 +13,7 @@ from rest_framework.routers import DefaultRouter
 
 from allauth.account.views import ConfirmEmailView
 
+from apps.users.views import UserViewSet 
 
 from apps.incite.views import (
     InstituicaoMarkerView,
@@ -25,6 +26,7 @@ from apps.incite.views import (
 )
 
 router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
 router.register(r'instituicoes', InstituicaoViewSet)
 router.register(r'pesquisadores', PesquisadorViewSet)
 router.register(r'pesquisas', PesquisaViewSet) # Você já tinha o ViewSet, só faltava registrar
@@ -91,7 +93,17 @@ urlpatterns = [
     ),
     # [ROUTE] api/v1/auth/password/reset/confirm/<uidb64>/<token>/
 
-    # ── ⋙ ── ── ── instituicoes pesquisadores postagens  ── ── ── ── ──➤
+
+    # ── ◯─◡◠◡◠◡ USERS + INSTITUIÇÕES + PESQUISADORES + POSTAGENS & ETC ◠◡◠◡◠◡◠◡◠─➤
+    path('api/v1/', include(router.urls)),
+    # [ROUTE]  api/v1/users/
+    # [ROUTE]  api/v1/users/{id}/ 
+    # [ROUTE]  api/v1/users/
+    # [ROUTE]  api/v1/users/{id}/ 
+    # [ROUTE]  api/v1/users/
+    # [ROUTE]  api/v1/users/{id}/ 
+
+    # . . .
 
     # [ROUTE]  api/v1/instituicoes/
     # [ROUTE]  api/v1/instituicoes/{id}/ 
@@ -99,7 +111,7 @@ urlpatterns = [
     # [ROUTE]  api/v1/pesquisadores/{id}/ 
     # [ROUTE]  api/v1/postagens/
     # [ROUTE]  api/v1/postagens/{id}/ 
-    path('api/v1/', include(router.urls)),
+    
 
     # NOTE
     #         Método    | URL                         | Ação            | Descrição

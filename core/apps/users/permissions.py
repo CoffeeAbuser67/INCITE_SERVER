@@ -1,42 +1,15 @@
-from django.contrib.auth.models import Group
-from rest_framework import permissions
+# users/permissions.py
+from rest_framework.permissions import BasePermission
 
-# HERE PERMISSIONS.PY
-
-
-# ● _is_in_group
-def _is_in_group(user, group_name):
+class IsAdminOrIsSelf(BasePermission):
     """
-    Takes a user and a group name, and returns `True` if the user is in that group.
+    NOTE
+    Permite acesso total para admins (is_staff).
+    Permite que usuários não-admin vejam e editem seus próprios perfis, mas não o de outros.
     """
-
-    # _PIN_  related_name='primary_users' 
-    #   for reverse lookups I will need to use primary_users instead of the default user_set
-
-    try:
-        return Group.objects.get(name=group_name).auth_group.filter(id=user.id).exists()
-    except Group.DoesNotExist:
-        return None
-
-
-# ● _has_group_permission
-def _has_group_permission(user, required_groups):
-    return any([_is_in_group(user, group_name) for group_name in required_groups])
-
-
-# ✪ ⋙ ── ── ── IsAdminUser ── ── ── ──➤
-class IsAdminUser(permissions.BasePermission):
-    # group_name for super admin
-    required_groups = ['admin','super']
-
-    def has_permission(self, request, view):
-        
-        # ○ _has_group_permission
-        has_group_permission = _has_group_permission(request.user, self.required_groups)
-        return request.user and has_group_permission
-
     def has_object_permission(self, request, view, obj):
-        
-        has_group_permission = _has_group_permission(request.user, self.required_groups)
-        return request.user and has_group_permission
-
+        # Admins podem fazer tudo com qualquer objeto
+        if request.user.is_staff:
+            return True
+        # O usuário logado é o mesmo objeto que está tentando acessar?
+        return obj == request.user
