@@ -17,6 +17,8 @@ User = get_user_model()
 # {✪} UserSerializer - Output Serializer 
 class UserSerializer(serializers.ModelSerializer): 
 
+    instituicoes_count = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -25,7 +27,11 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "user_group",
+            "instituicoes_count", # Adiciona o novo campo
         ]
+
+    def get_instituicoes_count(self, obj):
+        return obj.instituicoes.count()
 
 
 # {✪} CustomRegisterSerializer - Input Serializer
@@ -46,7 +52,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             "first_name": self.validated_data.get("first_name", ""),
             "last_name": self.validated_data.get("last_name", ""),
             "password1": self.validated_data.get("password1", ""),
-            "user_group": self.validated_data.get("user_group", User.UserGroup.CLIENTE),  # Padrão: usuário comum
+            "user_group": self.validated_data.get("user_group", User.UserGroup.MEMBRO),  # Padrão: usuário comum
         }
 
     def save(self, request):

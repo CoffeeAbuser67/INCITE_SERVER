@@ -15,12 +15,16 @@ class UserViewSet(viewsets.ModelViewSet):
     - Usuários comuns não conseguem listar todos os usuários.
     - Um usuário só pode ver/editar/deletar seu próprio perfil (a menos que seja admin).
     """
+
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminOrIsSelf]
 
+
     def get_queryset(self):
-        # Admins veem todos, usuários comuns só veem a si mesmos.
+        # Admins veem todos menos a si mesmo, usuários comuns só veem a si mesmos.
         user = self.request.user
         if user.is_staff:
-            return User.objects.all()
+            # EXCLUI O USUÁRIO ATUAL DA LISTA
+            return User.objects.all().exclude(pk=user.pk)
+        
         return User.objects.filter(pk=user.pk)
