@@ -5,80 +5,177 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Instituicao',
+            name="Instituicao",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
-                ('cidade', models.CharField(max_length=150)),
-                ('coordenador_responsavel', models.CharField(max_length=255)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('telefone', models.CharField(max_length=20)),
-                ('quantidade_pesquisadores', models.PositiveIntegerField(default=0)),
-                ('informacoes_adicionais', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
+                ("cidade", models.CharField(max_length=150)),
+                ("coordenador_responsavel", models.CharField(max_length=255)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("telefone", models.CharField(max_length=20)),
+                ("quantidade_pesquisadores", models.PositiveIntegerField(default=0)),
+                ("informacoes_adicionais", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ProdutoInovacao',
+            name="ProdutoInovacao",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
-                ('info', models.TextField()),
-                ('ano_inicio', models.PositiveIntegerField()),
-                ('ano_fim', models.PositiveIntegerField(blank=True, null=True)),
-                ('instituicao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='produtos', to='incite.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
+                ("info", models.TextField()),
+                ("ano_inicio", models.PositiveIntegerField()),
+                ("ano_fim", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="produtos",
+                        to="incite.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Postagem',
+            name="Postagem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('content', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('instituicao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='postagens', to='incite.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("content", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="postagens",
+                        to="incite.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Pesquisador',
+            name="Pesquisador",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
-                ('area_atuacao', models.CharField(blank=True, max_length=255, null=True)),
-                ('desligado', models.BooleanField(default=False)),
-                ('bolsista', models.BooleanField(default=False)),
-                ('instituicao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pesquisadores', to='incite.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
+                (
+                    "area_atuacao",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("desligado", models.BooleanField(default=False)),
+                ("bolsista", models.BooleanField(default=False)),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="pesquisadores",
+                        to="incite.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Pesquisa',
+            name="Pesquisa",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
-                ('info', models.TextField()),
-                ('ano_inicio', models.PositiveIntegerField()),
-                ('ano_fim', models.PositiveIntegerField(blank=True, null=True)),
-                ('instituicao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pesquisas', to='incite.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
+                ("info", models.TextField()),
+                ("ano_inicio", models.PositiveIntegerField()),
+                ("ano_fim", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="pesquisas",
+                        to="incite.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='AcaoExtensionista',
+            name="AcaoExtensionista",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=255)),
-                ('info', models.TextField()),
-                ('ano_inicio', models.PositiveIntegerField()),
-                ('ano_fim', models.PositiveIntegerField(blank=True, null=True)),
-                ('tipo_comunidade', models.CharField(blank=True, choices=[('TR', 'Tradicionais'), ('IN', 'Indígenas'), ('QU', 'Quilombolas'), ('AS', 'Assentamentos')], max_length=2, null=True)),
-                ('instituicao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='acoes_extensionistas', to='incite.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=255)),
+                ("info", models.TextField()),
+                ("ano_inicio", models.PositiveIntegerField()),
+                ("ano_fim", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "tipo_comunidade",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("TR", "Tradicionais"),
+                            ("IN", "Indígenas"),
+                            ("QU", "Quilombolas"),
+                            ("AS", "Assentamentos"),
+                        ],
+                        max_length=2,
+                        null=True,
+                    ),
+                ),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="acoes_extensionistas",
+                        to="incite.instituicao",
+                    ),
+                ),
             ],
         ),
     ]

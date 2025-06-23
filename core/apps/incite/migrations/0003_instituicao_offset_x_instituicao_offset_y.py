@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('incite', '0002_remove_instituicao_cidade_instituicao_cidade_id_mapa'),
+        ("incite", "0002_remove_instituicao_cidade_instituicao_cidade_id_mapa"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='instituicao',
-            name='offset_x',
+            model_name="instituicao",
+            name="offset_x",
             field=models.FloatField(default=0),
         ),
         migrations.AddField(
-            model_name='instituicao',
-            name='offset_y',
+            model_name="instituicao",
+            name="offset_y",
             field=models.FloatField(default=0),
         ),
     ]

@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('incite', '0003_instituicao_offset_x_instituicao_offset_y'),
+        ("incite", "0003_instituicao_offset_x_instituicao_offset_y"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='instituicao',
-            name='marcador_logo',
-            field=models.ImageField(blank=True, null=True, upload_to='logos_instituicoes/'),
+            model_name="instituicao",
+            name="marcador_logo",
+            field=models.ImageField(
+                blank=True, null=True, upload_to="logos_instituicoes/"
+            ),
         ),
     ]

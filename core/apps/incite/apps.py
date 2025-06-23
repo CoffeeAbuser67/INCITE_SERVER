@@ -3,8 +3,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class AgriculturaConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.incite'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.incite"
     verbose_name = _("Incite")
-
-

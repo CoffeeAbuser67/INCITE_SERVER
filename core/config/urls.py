@@ -21,8 +21,10 @@ from apps.incite.views import (
     PesquisadorViewSet, 
     PesquisaViewSet,
     PostagemViewSet,
+    PostagemBlogViewSet,
     AcaoExtensionistaViewSet,
-    ProdutoInovacaoViewSet
+    ProdutoInovacaoViewSet,
+    PublicInstituicaoDetailView
 )
 
 router = DefaultRouter()
@@ -31,8 +33,10 @@ router.register(r'instituicoes', InstituicaoViewSet)
 router.register(r'pesquisadores', PesquisadorViewSet)
 router.register(r'pesquisas', PesquisaViewSet) # Você já tinha o ViewSet, só faltava registrar
 router.register(r'postagens', PostagemViewSet)
+router.register(r'blog/posts', PostagemBlogViewSet, basename='blog-post') 
 router.register(r'acoes_extensionistas', AcaoExtensionistaViewSet)
 router.register(r'produtos', ProdutoInovacaoViewSet)
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -95,6 +99,7 @@ urlpatterns = [
 
 
     # ── ◯─◡◠◡◠◡ USERS + INSTITUIÇÕES + PESQUISADORES + POSTAGENS & ETC ◠◡◠◡◠◡◠◡◠─➤
+    # . . . 🔒
     path('api/v1/', include(router.urls)),
     # [ROUTE]  api/v1/users/
     # [ROUTE]  api/v1/users/{id}/ 
@@ -103,7 +108,7 @@ urlpatterns = [
     # [ROUTE]  api/v1/users/
     # [ROUTE]  api/v1/users/{id}/ 
 
-    # . . .
+    # . . . 🔒
 
     # [ROUTE]  api/v1/instituicoes/
     # [ROUTE]  api/v1/instituicoes/{id}/ 
@@ -123,13 +128,26 @@ urlpatterns = [
     # PATCH     | /api/instituicoes/{id}/     | partial_update  | Atualiza alguns campos de uma instituição.
     # DELETE    | /api/instituicoes/{id}/     | destroy         | Deleta uma instituição.
 
-    #  . . .
+    #  . . . 🔓
     # [ROUTE]  api/v1/map-markers/
     path(
         'api/v1/map-markers/', 
         InstituicaoMarkerView.as_view(), 
         name='public-map-markers'
     ),
+
+
+    # [ROUTE]  api/v1/profile/instituicoes/<int:pk>/
+    path(
+        'api/v1/profile/instituicoes/<int:pk>/', # A URL espera o ID da instituição
+        PublicInstituicaoDetailView.as_view(), 
+        name='public-instituicao-detail'
+    ),
+
+
+
+
+
 
 
     # ── ⋙ ── ── ── Temp_cache_view ── ── ── ── ──➤

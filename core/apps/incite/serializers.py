@@ -1,49 +1,103 @@
 # incite/serializers.py (VERSÃO CORRIGIDA E FINAL)
 
 from rest_framework import serializers
-from .models import Instituicao, Postagem, Pesquisador, Pesquisa, AcaoExtensionista, ProdutoInovacao
+from .models import (
+    Instituicao,
+    Postagem,
+    Pesquisador,
+    Pesquisa,
+    AcaoExtensionista,
+    ProdutoInovacao,
+)
 
 
-
-# Serializa apenas os campos de Instituicao necessários para o mapa público.
+# {✪} InstituicaoMarkerSerializer
 class InstituicaoMarkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instituicao
         fields = [
-            'id', 
-            'nome', 
-            'cidade_id_mapa', 
-            'marcador_logo', 
-            'offset_x', 
-            'offset_y'
+            "id",
+            "nome",
+            "cidade_id_mapa",
+            "marcador_logo",
+            "offset_x",
+            "offset_y",
         ]
 
 
+# (✪) PostagemSerializer
 class PostagemSerializer(serializers.ModelSerializer):
+    """
+    Serializer completo para o painel de administração (CRUD de Postagens).
+    """
+
     class Meta:
         model = Postagem
-        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'instituicao']
-        read_only_fields = ['created_at', 'updated_at']
+        # ▼▼▼ CAMPOS NOVOS ADICIONADOS AQUI ▼▼▼
+        fields = [
+            "id",
+            "title",
+            "content",
+            "resumo",
+            "imagem_destaque",
+            "created_at",
+            "updated_at",
+            "instituicao",
+            "autor",  # <-- Adicionado
+        ]
+        # O autor será definido automaticamente pela view (perform_create),
+        # mas precisa estar nos fields para ser lido.
+        read_only_fields = ["created_at", "updated_at"]
+
+
+# (✪) PostagemBlogSerializer
+class PostagemBlogSerializer(serializers.ModelSerializer):
+    """
+    Serializer otimizado para a página pública do blog.
+    """
+
+    # Para o público, não queremos o ID do autor/instituição, mas sim o nome.
+    instituicao_nome = serializers.StringRelatedField(
+        source="instituicao", read_only=True, default=""
+    )
+    autor_nome = serializers.StringRelatedField(source="autor", read_only=True)
+
+    class Meta:
+        model = Postagem
+        fields = [
+            "id",
+            "title",
+            "resumo",
+            "content",
+            "imagem_destaque",
+            "created_at",
+            "instituicao_nome",  # <-- nome em vez do id
+            "autor_nome",  # <-- nome em vez do id
+        ]
+
 
 class PesquisadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pesquisador
-        fields = ['id', 'nome', 'area_atuacao', 'desligado', 'bolsista', 'instituicao']
+        fields = ["id", "nome", "area_atuacao", "desligado", "bolsista", "instituicao"]
+
 
 class PesquisaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pesquisa
-        fields = ['id', 'nome', 'info', 'ano_inicio', 'ano_fim', 'instituicao']
+        fields = ["id", "nome", "info", "ano_inicio", "ano_fim", "instituicao"]
+
 
 class AcaoExtensionistaSerializer(serializers.ModelSerializer):
     class Meta:
         model = AcaoExtensionista
-        fields = ['id', 'nome', 'info', 'ano_inicio', 'tipo_comunidade', 'instituicao']
+        fields = ["id", "nome", "info", "ano_inicio", "tipo_comunidade", "instituicao"]
+
 
 class ProdutoInovacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProdutoInovacao
-        fields = ['id', 'nome', 'info', 'ano_inicio', 'ano_fim', 'instituicao']
+        fields = ["id", "nome", "info", "ano_inicio", "ano_fim", "instituicao"]
 
 
 class InstituicaoSerializer(serializers.ModelSerializer):
@@ -57,7 +111,19 @@ class InstituicaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instituicao
         fields = [
-            'id', 'nome', 'cidade_id_mapa', 'coordenador_responsavel', 'email', 'telefone', 
-            'informacoes_adicionais',  'offset_x', 'offset_y', 'marcador_logo', 'postagens', 'pesquisadores', 'pesquisas', 
-            'acoes_extensionistas', 'produtos'
+            "id",
+            "nome",
+            "cidade_id_mapa",
+            "coordenador_responsavel",
+            "email",
+            "telefone",
+            "informacoes_adicionais",
+            "offset_x",
+            "offset_y",
+            "marcador_logo",
+            "postagens",
+            "pesquisadores",
+            "pesquisas",
+            "acoes_extensionistas",
+            "produtos",
         ]

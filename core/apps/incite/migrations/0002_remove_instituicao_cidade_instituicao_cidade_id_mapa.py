@@ -4,19 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('incite', '0001_initial'),
+        ("incite", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='instituicao',
-            name='cidade',
+            model_name="instituicao",
+            name="cidade",
         ),
         migrations.AddField(
-            model_name='instituicao',
-            name='cidade_id_mapa',
-            field=models.CharField(blank=True, db_index=True, max_length=100, null=True),
+            model_name="instituicao",
+            name="cidade_id_mapa",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=100, null=True
+            ),
         ),
     ]

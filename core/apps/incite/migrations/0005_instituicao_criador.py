@@ -6,16 +6,21 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('incite', '0004_instituicao_marcador_logo'),
+        ("incite", "0004_instituicao_marcador_logo"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='instituicao',
-            name='criador',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='instituicoes', to=settings.AUTH_USER_MODEL),
+            model_name="instituicao",
+            name="criador",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="instituicoes",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
