@@ -135,3 +135,12 @@ class Postagem(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# ✪ PostagemImagem
+class PostagemImagem(models.Model):
+    imagem = models.ImageField(upload_to="post_content_images/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.imagem.name

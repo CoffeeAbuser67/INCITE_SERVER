@@ -8,6 +8,7 @@ from .models import (
     Pesquisador,
     Pesquisa,
     Postagem,
+    PostagemImagem,
     AcaoExtensionista,
     ProdutoInovacao,
 )
@@ -16,10 +17,11 @@ from .serializers import (
     PesquisadorSerializer,
     PesquisaSerializer,
     PostagemSerializer,
+    PostagemBlogSerializer,
+    PostagemImagemSerializer,
     AcaoExtensionistaSerializer,
     ProdutoInovacaoSerializer,
     InstituicaoMarkerSerializer,
-    PostagemBlogSerializer,
 )
 
 from .permissions import IsPostAuthorOrAdmin
@@ -160,17 +162,22 @@ class PostagemViewSet(viewsets.ModelViewSet):  # (✪) PostagemViewSet
         # Associa o autor logado, a instituição virá (ou não) do payload
         serializer.save(autor=self.request.user)
 
+
+class PostagemImagemUploadView(generics.CreateAPIView):  # (✪) PostagemImagemUploadView
+    queryset = PostagemImagem.objects.all()
+    serializer_class = PostagemImagemSerializer
+    permission_classes = [permissions.IsAuthenticated] # Apenas usuários logados podem fazer upload
+
+
 # Viewset Público
 class PostagemBlogViewSet(viewsets.ReadOnlyModelViewSet): # (✪) PostagemBlogViewSet
     queryset = Postagem.objects.all().order_by("-created_at")
     serializer_class = PostagemBlogSerializer
     permission_classes = [permissions.AllowAny]
 
-
 class AcaoExtensionistaViewSet(viewsets.ModelViewSet):  # ✪ AcaoExtensionistaViewSet
     queryset = AcaoExtensionista.objects.all()
     serializer_class = AcaoExtensionistaSerializer
-
 
 class ProdutoInovacaoViewSet(viewsets.ModelViewSet):  # ✪ ProdutoInovacaoViewSet
     queryset = ProdutoInovacao.objects.all()

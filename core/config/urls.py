@@ -24,7 +24,8 @@ from apps.incite.views import (
     PostagemBlogViewSet,
     AcaoExtensionistaViewSet,
     ProdutoInovacaoViewSet,
-    PublicInstituicaoDetailView
+    PublicInstituicaoDetailView,
+    PostagemImagemUploadView,
 )
 
 router = DefaultRouter()
@@ -128,7 +129,15 @@ urlpatterns = [
     # PATCH     | /api/instituicoes/{id}/     | partial_update  | Atualiza alguns campos de uma instituição.
     # DELETE    | /api/instituicoes/{id}/     | destroy         | Deleta uma instituição.
 
+
+    # [ROUTE]  api/v1/postagens/upload-image/
+    path('api/v1/postagens-content/upload-image/', PostagemImagemUploadView.as_view(), name='postagem-imagem-upload'),
+
     #  . . . 🔓
+
+    # [ROUTE]  api/v1/blog/posts/
+    # [ROUTE]  api/v1/blog/posts/{id}/ 
+
     # [ROUTE]  api/v1/map-markers/
     path(
         'api/v1/map-markers/', 
@@ -143,10 +152,6 @@ urlpatterns = [
         PublicInstituicaoDetailView.as_view(), 
         name='public-instituicao-detail'
     ),
-
-
-
-
 
 
 

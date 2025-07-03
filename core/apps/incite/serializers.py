@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import (
     Instituicao,
     Postagem,
+    PostagemImagem,
     Pesquisador,
     Pesquisa,
     AcaoExtensionista,
@@ -79,6 +80,14 @@ class PostagemBlogSerializer(serializers.ModelSerializer):
             "instituicao_nome",  # <-- nome em vez do id
             "autor_nome",  # <-- nome em vez do id
         ]
+
+
+# (✪) PostagemImagemSerializer
+class PostagemImagemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostagemImagem
+        fields = ['id', 'imagem', 'uploaded_at']
+        read_only_fields = ['id', 'uploaded_at'] # Apenas a imagem é enviada
 
 
 class PesquisadorSerializer(serializers.ModelSerializer):
