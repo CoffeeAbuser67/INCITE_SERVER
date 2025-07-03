@@ -127,10 +127,11 @@ class PostagemViewSet(viewsets.ModelViewSet):  # (✪) PostagemViewSet
 
     def get_queryset(self):
         """
+        NOTE
         Filtra o queryset de postagens.
-        - Admins podem ver tudo.
-        - Usuários básicos só veem posts de suas instituições.
-        - Aceita um query param `?tipo=geral` para filtrar apenas posts sem instituição.
+        -» Admins podem ver tudo.
+        -» Usuários básicos só veem posts de suas instituições.
+        -» Aceita um query param `?tipo=geral` para filtrar apenas posts sem instituição.
         """
         user = self.request.user
 
@@ -140,6 +141,13 @@ class PostagemViewSet(viewsets.ModelViewSet):  # (✪) PostagemViewSet
         else:
             # Filtra por instituições que o usuário criou
             queryset = Postagem.objects.filter(instituicao__criador=user)
+
+        """
+        NOTE
+        -» As calls provenientes do form de PostsGerais dinamicamente adicionam o parametro tipo no request 
+        -» fetchPostsGerais add o param tipo com value = geral.
+        -» const response = await axiosForInterceptor.get('/postagens/?tipo=geral');
+        """
 
         tipo_filtro = self.request.query_params.get("tipo")
         if tipo_filtro == "geral":
@@ -151,8 +159,6 @@ class PostagemViewSet(viewsets.ModelViewSet):  # (✪) PostagemViewSet
     def perform_create(self, serializer):
         # Associa o autor logado, a instituição virá (ou não) do payload
         serializer.save(autor=self.request.user)
-
-
 
 # Viewset Público
 class PostagemBlogViewSet(viewsets.ReadOnlyModelViewSet): # (✪) PostagemBlogViewSet

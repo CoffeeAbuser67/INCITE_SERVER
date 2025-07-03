@@ -19,13 +19,18 @@ class InstituicaoMarkerSerializer(serializers.ModelSerializer):
             "id",
             "nome",
             "cidade_id_mapa",
+            "cidade_nome",
+            "coordenador_responsavel",
+            "email",
+            "telefone",
+            "informacoes_adicionais",
             "marcador_logo",
             "offset_x",
             "offset_y",
         ]
 
 
-# (✪) PostagemSerializer
+# (✪) PostagemSerializer - input/output Serializer
 class PostagemSerializer(serializers.ModelSerializer):
     """
     Serializer completo para o painel de administração (CRUD de Postagens).
@@ -50,7 +55,7 @@ class PostagemSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "updated_at"]
 
 
-# (✪) PostagemBlogSerializer
+# (✪) PostagemBlogSerializer - outputSerializer
 class PostagemBlogSerializer(serializers.ModelSerializer):
     """
     Serializer otimizado para a página pública do blog.
@@ -114,6 +119,7 @@ class InstituicaoSerializer(serializers.ModelSerializer):
             "id",
             "nome",
             "cidade_id_mapa",
+            "cidade_nome",
             "coordenador_responsavel",
             "email",
             "telefone",

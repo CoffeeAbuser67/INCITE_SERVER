@@ -154,5 +154,7 @@ def getTotalValues (region, year, variable):
         variable= variable,
     ).values('total', 'name_id')  
 
-    return queryset
+    R = {el['name_id']: el['total'] for el in queryset}
+
+    return R
 # ── ⋙── ── ── ── ── ── ── ──➤

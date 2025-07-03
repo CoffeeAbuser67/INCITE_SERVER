@@ -3,13 +3,16 @@ from django.db import models
 
 
 # 🧿
-# ✪ Instituicao
+# {✪} Instituicao
 class Instituicao(models.Model):
     # Campos obrigatórios
     nome = models.CharField(max_length=255)
     cidade_id_mapa = models.CharField(
         max_length=100, db_index=True, null=True, blank=True
     )
+
+    cidade_nome = models.CharField(max_length=150, null=True, blank=True)
+
     coordenador_responsavel = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
