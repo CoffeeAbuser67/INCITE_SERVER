@@ -441,32 +441,32 @@ if '🦀' == '🦀':
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 
-# def get_total_values(area, year, variable):
+from django.db.models import Q
+from apps.agricultura.models import AgricultureData
 
 region = 'bahia'
 year = 2023
 variable = 'valor_da_producao'
 
 queryset = AgricultureData.objects.filter(
-    region = region,
-    year = year,
-    variable= variable,
-).values('total', 'name_id')  
+    Q(region=region) | Q(name_id=region),  # A mágica acontece aqui: busca onde a região É 'bahia' OU o nome É 'bahia'
+    year=year,
+    variable=variable
+).values('total', 'name_id')
 
-
-X = list(queryset)
-
-
-
-# def get_thermometer_color(value: float, start: float, end: float, colors: list[str]) -> str:
-#     step_size = (end - start) / len(colors)
-#     index = min(max(int((value - start) / step_size), 0), len(colors) - 1)
-#     return colors[index]
+T = {el['name_id']: el['total'] for el in queryset}
 
 
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 #  TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST ║                                                                                                  ║
 # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+
+
+
+
+
 
 

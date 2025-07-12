@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 
-# 🧿
+
 # {✪} Instituicao
 class Instituicao(models.Model):
     # Campos obrigatórios

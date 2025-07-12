@@ -149,12 +149,13 @@ def getTopTimeSeries (area, variable, type, INSUMOS):
 def getTotalValues (region, year, variable):
 
     queryset = AgricultureData.objects.filter(
-        region = region,
-        year = year,
-        variable= variable,
-    ).values('total', 'name_id')  
+        Q(region=region) | Q(name_id=region),  
+        year=year,
+        variable=variable
+    ).values('total', 'name_id')
 
     R = {el['name_id']: el['total'] for el in queryset}
 
     return R
 # ── ⋙── ── ── ── ── ── ── ──➤
+
