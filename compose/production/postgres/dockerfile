@@ -1,0 +1,11 @@
+FROM postgres:16.4-alpine
+
+
+COPY ./compose/production/postgres/maintenance /usr/local/bin/maintenance
+RUN chmod +x /usr/local/bin/maintenance/*
+
+RUN find /usr/local/bin/maintenance/ -type f -exec sed -i 's/\r$//g' {} +
+
+RUN mv /usr/local/bin/maintenance/* /usr/local/bin \
+    && rmdir /usr/local/bin/maintenance
+

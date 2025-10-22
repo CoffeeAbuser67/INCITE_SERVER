@@ -6,6 +6,10 @@
 
 conda_env/
 .conda_env/
+
+condaEnv/
+.condaEnv/
+
 .envs/
 custom_ps.ps1
 .vscode/

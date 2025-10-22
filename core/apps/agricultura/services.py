@@ -25,8 +25,10 @@ def getTopValues(year: int, area: str, variable: str, type:str, INSUMOS: List[st
         
         if not queryset.exists():
             print("No matching data found.")
-            
+
+
         entry = queryset.first()  
+
         # Drop nan values and convert to numeric
         filtered_data = {k: float(v) for k, v in entry.items() if v is not None}
         # Get the top 9 largest values

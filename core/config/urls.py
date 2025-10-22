@@ -3,8 +3,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from apps.agricultura.views import TOPValuesView, TopTimeSeriesView, RegionValuesView
@@ -39,32 +37,13 @@ router.register(r'acoes_extensionistas', AcaoExtensionistaViewSet)
 router.register(r'produtos', ProdutoInovacaoViewSet)
 
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="BI API Admin",
-        default_version="v1",
-        description="API documentation for HM API",
-        contact=openapi.Contact(email="henry_melen@hotmail.com"),
-        license=openapi.License(name="MIT License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
-
 urlpatterns = [
 
     path(settings.ADMIN_URL, admin.site.urls),
     
-    # ┌─────────┐
-    # │ Swagger │
-    # └─────────┘
-
-    path('api/v1/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path("api/v1/redoc/", schema_view.with_ui("redoc", cache_timeout=0)),
-
-    # ★  ── ⋙⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⫸
-    #          ★ df-rest-auth 🛡️
-    # ★  ── ⋙⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⫸
+    # ★ ── ⋙⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⫸
+    # ★ df-rest-auth 🛡️
+    # ★ ── ⋙⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⇌⫸
 
     path("api/v1/auth/", include("dj_rest_auth.urls")),
     # [ROUTE]  api/v1/auth/password/reset/?$

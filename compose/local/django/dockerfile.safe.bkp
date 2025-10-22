@@ -1,0 +1,62 @@
+# HERE
+FROM python:3.12.12-slim AS python-base
+
+# - PYTHONUNBUFFERED: Ensures Python doesn't buffer the output, allowing for real-time log display.
+# - PYTHONDONTWRITEBYTECODE: Prevents Python from writing .pyc files.
+# - PIP_NO_CACHE_DIR: Disables caching for pip, improving reproducibility.
+# - PIP_DISABLE_PIP_VERSION_CHECK: Prevents pip from checking for updates to itself.
+# - PIP_DEFAULT_TIMEOUT: Sets a default timeout value for pip operations.
+
+ENV PYTHONUNBUFFERED=1 \    
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_HOME="/opt/poetry" \
+    APP_PATH="/app/" \
+    VENV_PATH="/app/.venv"
+
+# - Add to the path variable.
+ENV PATH="$VENV_PATH/bin:$POETRY_HOME/venv/bin:$PATH"
+
+FROM python-base AS builder
+
+RUN set -xe \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y \
+        curl \
+        libpq-dev \
+        build-essential\
+    && apt-get clean 
+
+# Install Poetry - respects $POETRY_VERSION & $POETRY_HOME
+ENV POETRY_VERSION=1.8.2
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# We copy our Python requirements here to cache them
+# and install only runtime deps using poetry
+WORKDIR $APP_PATH
+COPY ./poetry.lock ./pyproject.toml ./
+RUN poetry install --only main --no-root
+
+
+FROM python-base AS development
+# Nao copio o meu diretori porque o hotreloading ja ta espelhando o volume. 
+COPY --from=builder $VENV_PATH $VENV_PATH
+
+WORKDIR $APP_PATH
+
+COPY ./compose/local/django/entrypoint /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod +x /entrypoint
+
+COPY ./compose/local/django/start /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod +x /start
+
+EXPOSE 8000
+
+ENTRYPOINT ["/entrypoint"]
+

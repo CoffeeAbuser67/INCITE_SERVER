@@ -1,0 +1,81 @@
+
+#  ✳ ✦──── local ───➤
+
+
+# build: docker compose -f local.yml up --build -d --remove-orphans
+# up:    docker compose -f local.yml up -d
+# down:  docker compose -f local.yml down
+
+services:
+  api:
+    build:
+      context: . 
+      dockerfile: ./compose/local/django/dockerfile
+    image: resumo_store_local_api 
+    container_name: django-api
+    volumes:
+      - ./core:/app 
+      - local_mediafiles:/app/mediafiles
+
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.production/.postgres
+    environment:
+      - IN_DOCKER=true
+    depends_on:
+      - postgres
+    command: /start
+    networks:
+      - my-app-net
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/dockerfile
+    container_name: postgres-DB
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+    networks:
+      - my-app-net
+
+  nginx:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/local/nginx/dockerfile
+    container_name: nginx
+    volumes:
+      - local_mediafiles:/usr/share/nginx/mediafiles
+    ports:
+      - "81:80"
+    depends_on:
+      - api
+    networks:
+      - my-app-net
+
+networks:
+  my-app-net:
+    driver: bridge
+
+
+volumes:
+  local_mediafiles: {}
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+
+
+
+
+
+
+
+
+
+
+

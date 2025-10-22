@@ -2,17 +2,21 @@
 
 from datetime import timedelta
 from pathlib import Path
+import os
+from environ import Env
 
-import environ
+env = Env()
 
 
-# NOTE Should I remove cors in production ? 
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-env = environ.Env()
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-ROOT_DIR = BASE_DIR / "core"
+if not os.environ.get("IN_DOCKER"):
+    print("== 🌃 Lendo arquivos .env locais ==")
+    env.read_env(ROOT_DIR / ".envs" / ".local" / ".django")
+    env.read_env(ROOT_DIR / ".envs" / ".local" / ".postgres")
 
 
 DJANGO_APPS = [
@@ -28,7 +32,6 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
-    "django_filters",
     "corsheaders",
     "rest_framework.authtoken",
     "allauth",
@@ -44,6 +47,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [
+    "allauth.account.middleware.AccountMiddleware",  
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -74,25 +78,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-
-# ── ⋙ ── ── ── ── ── ── ── ──➤
-# _DB_ DATABASES
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Incite',
-        'USER': 'postgres',
-        'PASSWORD': 'master',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-} 
-# ── ⋙ ── ── ── ── ── ── ── ──➤
-
-
-# DATABASES = {"default": env.db("DATABASE_URL")}
-# DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 
 PASSWORD_HASHERS = [
@@ -133,14 +118,13 @@ ADMIN_URL = "lesecret/"
 # _PIN_ : static and media files
 #Change the static and media files place. 
 #Located inside of the core folder 
-STATIC_URL = "/staticfiles/"
-STATIC_ROOT = str(ROOT_DIR / "staticfiles")
-MEDIA_URL = "/mediafiles/"
-MEDIA_ROOT = str(ROOT_DIR / "mediafiles")
 
+STATIC_URL = "/staticfiles/"
+STATIC_ROOT = str(BASE_DIR / "staticfiles")
+MEDIA_URL = "/mediafiles/"
+MEDIA_ROOT = str(BASE_DIR / "mediafiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
 AUTH_USER_MODEL = "users.User" # ✳ AUTH_USER_MODEL
 
 # WARN: AllowAny permission 
@@ -154,43 +138,38 @@ REST_FRAMEWORK = {
     ],
 }
 
-
 # ── ◯⫘⫘⫘⫘  dj-rest-auth  ⫘⫘⫘⫘⫘⫸
 
-
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),# _PIN_ ⏰ ACCESS_TOKEN_LIFETIME
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),# _PIN_ ⏰ ACCESS_TOKEN_LIFETIME
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1), 
     "ROTATE_REFRESH_TOKENS": False,
     # "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "SIGNING_KEY": "Q_OlLlrzNWu4dvgRbyrv7g0PQ30txCl9dD7xounpZLB0rvdn0xc",  # [ENV]
     "COOKIE_NAME": "access-token",
-    "COOKIE_SECURE": True,  # WARN pra funcionar em dev
+    "COOKIE_SECURE": True, 
     "COOKIE_HTTPONLY": True,
-    "COOKIE_SAMESITE": "None",   # WARN pra funcionar em dev
+    "COOKIE_SAMESITE": "None",  
 }
-
 
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "access-token",
     "JWT_AUTH_REFRESH_COOKIE": "refresh-token",
-    'JWT_AUTH_SECURE': True, # _PIN_ Set to true in https
-    'JWT_AUTH_HTTPONLY': True,
-    'JWT_AUTH_SAMESITE': 'None', # Lax, Strict
+    "JWT_AUTH_SECURE": True,  
+    "JWT_AUTH_HTTPONLY": True,
+    "JWT_AUTH_SAMESITE": "None", 
     "REGISTER_SERIALIZER": "apps.users.serializers.CustomRegisterSerializer", # _PIN_ Overriding these Serializers
     "USER_DETAILS_SERIALIZER": "apps.users.serializers.UserSerializer",
-}
+} 
 
-# Configuração do Allauth (dj-rest-auth depende dele)
+
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-# ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+
 
 AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
