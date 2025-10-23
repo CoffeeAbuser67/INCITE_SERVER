@@ -1,0 +1,70 @@
+
+services:
+  api:
+    build:
+      context: . 
+      dockerfile: ./compose/production/django/dockerfile
+    image: resumo_store_local_api 
+    container_name: django-api
+    volumes:
+      - local_mediafiles:/app/mediafiles
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    environment:
+      - IN_DOCKER=true
+    depends_on:
+      - postgres
+    command: /start
+    networks:
+      - my-app-net
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/dockerfile
+    container_name: postgres-DB
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+    networks:
+      - my-app-net
+
+  nginx:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/dockerfile
+    container_name: nginx
+    volumes:
+      - local_mediafiles:/usr/share/nginx/mediafiles
+    ports:
+      - "127.0.0.1:8001:80"
+    depends_on:
+      - api
+    networks:
+      - my-app-net
+
+networks:
+  my-app-net:
+    driver: bridge
+
+
+volumes:
+  local_mediafiles: {}
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+
+
+
+
+
+
+
+
+
+
+

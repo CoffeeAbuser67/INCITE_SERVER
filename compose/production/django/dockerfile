@@ -1,0 +1,43 @@
+# HERE
+FROM python:3.12.12-slim AS python-base
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_HOME="/usr/local"\
+    APP_PATH="/app/" 
+
+
+RUN set -xe \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y \
+        curl \
+        libpq-dev \
+        build-essential\
+    && apt-get clean 
+
+ENV POETRY_VERSION=1.8.2
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+WORKDIR $APP_PATH
+COPY ./poetry.lock ./pyproject.toml ./
+COPY ./core/ ./
+
+RUN poetry install --only main --no-root
+
+
+COPY ./compose/production/django/entrypoint /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod +x /entrypoint
+
+COPY ./compose/production/django/start /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod +x /start
+
+EXPOSE 8000
+
+ENTRYPOINT ["/entrypoint"]
