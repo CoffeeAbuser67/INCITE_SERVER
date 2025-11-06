@@ -1,9 +1,11 @@
-#  ✪
-
 FROM nginx:stable-alpine
 
 RUN rm /etc/nginx/conf.d/default.conf
 
-COPY ./compose/local/nginx/nginx.conf /etc/nginx/conf.d
+COPY ./compose/production/nginx/nginx.conf /etc/nginx/conf.d
 
 COPY ./frontend /usr/share/nginx/html
+
+
+
+
