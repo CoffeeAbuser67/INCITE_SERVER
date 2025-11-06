@@ -7,7 +7,7 @@ import time
 
 print(">>> Iniciando configuração do ambiente Django...")
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.production')
 
 try:
     django.setup()
